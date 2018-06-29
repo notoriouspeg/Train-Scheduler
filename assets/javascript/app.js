@@ -13,36 +13,75 @@ $( document ).ready(function() {
 
 var database = firebase.database();
 
-$("#trainInfoBtn").on("click", function(event) {
-	event.preventDefault();
+//Store inputs to Firebase in a JSON property
 
-    var firstTime = moment($("#firstTime").val().trim(), "hh:mm").subtract(1, "years").format("X");
+$("#trainInfoBtn").on("click", function(event) {
+    event.preventDefault();
     
+    var trainName = $("#name").val().trim();
+    var destination = $("#dest").val().trim();
+    var firstTime = $("#firstTime").val().trim();
     var frequency = $("#freq").val().trim();
 	
 	//current time
 	var currentTime = moment();
-	console.log("CURRENT TIME: " +  moment(currentTime).format("hh:mm"));
+    console.log("CURRENT TIME: " +  moment(firstTime).format("hh:mm"));
+    
+var newTrain = {
 
-	console.log(trainName);
-	console.log(destination);
-	console.log(firstTime);
-	console.log(frequency);
-	console.log(currentTime);
+    train: trainName,
+    trainGoing: destination,
+    trainComing: firstTime,
+    everyXMin: frequency
+};
 
-// var trainName = "";
-// var destination = "";
-// var frequency = "";
-// var nextArrival = "";
-// var minutesAway = "";
+database.ref().push(newTrain);
 
-// console.log(trainName);
-// console.log(Destination);
-// console.log(frequency);
-// console.log(nextArrival);
-// console.log(minutesAway);
+ $("#name").val("");
+ $("#dest").val("");
+ $("#firstTime").val("");
+ $("#freq").val("");
+
+});
+
+database.ref().on("child_added", function(trainData) {
+
+var tName = trainData.val().train;
+var tNameGoing = trainData.val().trainGoing; 
+var tNameComing = trainData.val().trainComing; 
+var tFrequency = trainData.val().everyXMin;
+var minAway = 0;
+var splitTime = tNameComing.split(":");
+console.log(splitTime);
+var newTrainTime = moment().hours(splitTime[0]).minutes(splitTime[1]);
+console.log(newTrainTime);
+var minDiff = moment().diff(newTrainTime, "minutes");
+var modulus = minDiff % tFrequency;
+console.log(modulus);
+var tDiff = '';
+tDiff = tFrequency - modulus;
+console.log(tDiff);
+
+
+
+// Subtract the modulus from the frequency is not working. 
+//I know I need to add that difference to the current time is not working
+// And I need to add the minAway
+
+newTrainTime = moment().format("hh:mm a");
+console.log (tName);
+console.log (tNameGoing);
+console.log (tNameComing);
+console.log (tFrequency);
+console.log(minAway);
+
+
+
+$("#tBody").append("<tr><td>"+tName+"</td><td>"+tNameGoing+"</td><td>"+tFrequency+"</td><td>"+tNameComing+"</td><td>"+minAway+"</td></tr>")
+
 
 
 
 });
+
 });
