@@ -61,11 +61,17 @@ console.log(modulus);
 var tDiff = '';
 tDiff = tFrequency - modulus;
 console.log(tDiff);
+var cTime = moment();
+var tArrival = '';
+tArrival = cTime - tDiff;
+console.log(tArrival);
 
 
 
+//What's not working yet:
 // Subtract the modulus from the frequency is not working. 
 //I know I need to add that difference to the current time is not working
+//Next Arrival has the First Train time but should have the next train time.
 // And I need to add the minAway
 
 newTrainTime = moment().format("hh:mm a");
